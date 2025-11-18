@@ -19,7 +19,7 @@ export default function ParentLayout() {
       <Stack.Screen name="add-reward" />
       <Stack.Screen name="calendar" />
       <Stack.Screen name="add-calendar-event" />
-      <Stack.Screen name="ai-insights" />
+      <Stack.Screen name="insights" />
     </Stack>
   );
 }
