@@ -2,7 +2,7 @@
  * Zustand Global State Store
  */
 import { create } from 'zustand';
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from '../utils/secureStorage';
 
 // Types
 interface User {

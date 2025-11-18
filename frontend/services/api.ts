@@ -2,7 +2,7 @@
  * API Service - Handles all backend communication
  */
 import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from '../utils/secureStorage';
 
 const API_URL = 'http://localhost:8000/api/v1';
 
