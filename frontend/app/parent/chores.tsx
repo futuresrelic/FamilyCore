@@ -74,9 +74,7 @@ export default function ChoresScreen() {
       {
         text: 'Delete',
         style: 'destructive',
-        onPress: () => deleteC
-
-horeMutation.mutate(chore.id),
+        onPress: () => deleteChoreMutation.mutate(chore.id),
       },
     ]);
   };
