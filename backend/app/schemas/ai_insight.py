@@ -8,7 +8,7 @@ class AIInsightResponse(BaseModel):
     parent_id: int
     insight_type: str
     text: str
-    metadata: Optional[str]
+    extra_data: Optional[str]
     created_at: datetime
     is_read: int
 
