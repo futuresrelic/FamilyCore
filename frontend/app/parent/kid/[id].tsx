@@ -15,8 +15,14 @@ import { StatusBar } from 'expo-status-bar';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Card from '../../../components/Card';
 import Button from '../../../components/Button';
-import { ParentTheme, Typography } from '../../../constants/theme';
+import { ParentTheme, Typography, Avatars } from '../../../constants/theme';
 import { kidsAPI, analyticsAPI, choresAPI } from '../../../services/api';
+
+// Helper to display avatar - handles both emoji values and old keys
+const getAvatarDisplay = (avatarId: string) => {
+  if (avatarId && avatarId.length <= 2) return avatarId;
+  return Avatars[avatarId as keyof typeof Avatars] || '😊';
+};
 
 export default function KidDetailScreen() {
   const router = useRouter();
@@ -109,7 +115,7 @@ export default function KidDetailScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Avatar & Stats */}
         <Card style={styles.profileCard}>
-          <Text style={styles.avatar}>{kid.avatar_id}</Text>
+          <Text style={styles.avatar}>{getAvatarDisplay(kid.avatar_id)}</Text>
           <Text style={styles.name}>{kid.name}</Text>
           {kid.age && <Text style={styles.age}>{kid.age} years old</Text>}
 

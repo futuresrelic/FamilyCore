@@ -27,7 +27,7 @@ export default function AddKidScreen() {
 
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
-  const [selectedAvatar, setSelectedAvatar] = useState('default_1');
+  const [selectedAvatar, setSelectedAvatar] = useState(Avatars.default_1);
 
   const addKidMutation = useMutation({
     mutationFn: (data: any) => kidsAPI.create(data),
@@ -101,9 +101,9 @@ export default function AddKidScreen() {
                 key={key}
                 style={[
                   styles.avatarOption,
-                  selectedAvatar === key && styles.avatarSelected,
+                  selectedAvatar === emoji && styles.avatarSelected,
                 ]}
-                onPress={() => setSelectedAvatar(key)}
+                onPress={() => setSelectedAvatar(emoji)}
               >
                 <Text style={styles.avatarEmoji}>{emoji}</Text>
               </TouchableOpacity>

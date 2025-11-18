@@ -16,9 +16,17 @@ import { StatusBar } from 'expo-status-bar';
 import { useQuery } from '@tanstack/react-query';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
-import { ParentTheme, Typography } from '../../constants/theme';
+import { ParentTheme, Typography, Avatars } from '../../constants/theme';
 import { useAuthStore, useKidsStore } from '../../state/store';
 import { kidsAPI, analyticsAPI, choresAPI, aiAPI } from '../../services/api';
+
+// Helper to display avatar - handles both emoji values and old keys
+const getAvatarDisplay = (avatarId: string) => {
+  // If it's already an emoji, return it
+  if (avatarId && avatarId.length <= 2) return avatarId;
+  // If it's a key like "default_8", convert to emoji
+  return Avatars[avatarId as keyof typeof Avatars] || '😊';
+};
 
 export default function ParentDashboard() {
   const router = useRouter();
@@ -141,7 +149,7 @@ export default function ParentDashboard() {
             kids.map((kid) => (
               <Card key={kid.id} style={styles.kidCard}>
                 <View style={styles.kidInfo}>
-                  <Text style={styles.kidAvatar}>{kid.avatar_id}</Text>
+                  <Text style={styles.kidAvatar}>{getAvatarDisplay(kid.avatar_id)}</Text>
                   <View style={styles.kidDetails}>
                     <Text style={styles.kidName}>{kid.name}</Text>
                     <Text style={styles.kidStats}>
