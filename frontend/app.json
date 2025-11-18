@@ -16,7 +16,9 @@
     "android": {
       "package": "com.familycore.app"
     },
-    "web": {},
+    "web": {
+      "bundler": "metro"
+    },
     "plugins": [
       "expo-router",
       "expo-secure-store"
