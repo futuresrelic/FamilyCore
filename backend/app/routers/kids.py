@@ -25,10 +25,10 @@ def create_kid(
     # Check subscription limits for free tier
     if current_user.subscription_status == "free":
         kid_count = db.query(Kid).filter(Kid.parent_id == current_user.id).count()
-        if kid_count >= 1:
+        if kid_count >= 5:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Free tier limited to 1 kid. Upgrade to premium for unlimited kids."
+                detail="Free tier limited to 5 kids. Upgrade to premium for unlimited kids."
             )
 
     # Check if username is unique (if provided)
