@@ -27,6 +27,8 @@ export default function AddKidScreen() {
 
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
+  const [username, setUsername] = useState('');
+  const [pin, setPin] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState(Avatars.default_1);
 
   const addKidMutation = useMutation({
@@ -53,10 +55,28 @@ export default function AddKidScreen() {
       return;
     }
 
+    // Validate username and PIN (optional but must be together)
+    if (username.trim() && !pin) {
+      Alert.alert('Error', 'Please enter a PIN for kid login');
+      return;
+    }
+
+    if (pin && !username.trim()) {
+      Alert.alert('Error', 'Please enter a username for kid login');
+      return;
+    }
+
+    if (pin && pin.length < 4) {
+      Alert.alert('Error', 'PIN must be at least 4 digits');
+      return;
+    }
+
     addKidMutation.mutate({
       name: name.trim(),
       age: ageNum,
       avatar_id: selectedAvatar,
+      username: username.trim() || null,
+      pin: pin || null,
     });
   };
 
@@ -90,6 +110,31 @@ export default function AddKidScreen() {
             onChangeText={setAge}
             placeholder="Enter age"
             keyboardType="numeric"
+          />
+        </Card>
+
+        <Card style={styles.loginCard}>
+          <Text style={styles.sectionTitle}>Kid Login (Optional)</Text>
+          <Text style={styles.helperText}>
+            Set username & PIN so your kid can login independently
+          </Text>
+
+          <Input
+            label="Username"
+            value={username}
+            onChangeText={setUsername}
+            placeholder="e.g., emma123"
+            autoCapitalize="none"
+          />
+
+          <Input
+            label="PIN (4+ digits)"
+            value={pin}
+            onChangeText={setPin}
+            placeholder="Enter PIN"
+            keyboardType="numeric"
+            secureTextEntry
+            maxLength={6}
           />
         </Card>
 
@@ -154,6 +199,14 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSizes.lg,
     fontWeight: Typography.fontWeights.bold,
     color: ParentTheme.colors.text,
+    marginBottom: ParentTheme.spacing.md,
+  },
+  loginCard: {
+    marginTop: ParentTheme.spacing.lg,
+  },
+  helperText: {
+    fontSize: Typography.fontSizes.sm,
+    color: ParentTheme.colors.textLight,
     marginBottom: ParentTheme.spacing.md,
   },
   avatarCard: {

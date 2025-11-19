@@ -13,6 +13,8 @@ class Kid(Base):
     age = Column(Integer, nullable=True)
     birthday = Column(Date, nullable=True)
     avatar_id = Column(String, default="default_1")  # Avatar identifier
+    username = Column(String, unique=True, nullable=True, index=True)  # Kid login username
+    pin_hash = Column(String, nullable=True)  # Hashed PIN for kid login
     points = Column(Integer, default=0)
     streak = Column(Integer, default=0)  # Days of consecutive chore completion
     last_activity = Column(DateTime(timezone=True), nullable=True)

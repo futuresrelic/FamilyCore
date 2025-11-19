@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
+from passlib.context import CryptContext
 from ..core.database import get_db
 from ..core.deps import get_current_user
 from ..models.user import User
 from ..models.kid import Kid
-from ..schemas.kid import KidCreate, KidUpdate, KidResponse
+from ..schemas.kid import KidCreate, KidUpdate, KidResponse, KidLogin
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 router = APIRouter(prefix="/kids", tags=["kids"])
 
@@ -28,9 +31,25 @@ def create_kid(
                 detail="Free tier limited to 1 kid. Upgrade to premium for unlimited kids."
             )
 
+    # Check if username is unique (if provided)
+    if kid_data.username:
+        existing_kid = db.query(Kid).filter(Kid.username == kid_data.username).first()
+        if existing_kid:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Username already exists"
+            )
+
+    # Prepare kid data
+    kid_dict = kid_data.model_dump(exclude={'pin'})
+
+    # Hash PIN if provided
+    if kid_data.pin:
+        kid_dict['pin_hash'] = pwd_context.hash(kid_data.pin)
+
     new_kid = Kid(
         parent_id=current_user.id,
-        **kid_data.model_dump()
+        **kid_dict
     )
 
     db.add(new_kid)
@@ -130,3 +149,34 @@ def delete_kid(
     db.commit()
 
     return {"message": "Kid deleted successfully"}
+
+
+@router.post("/login")
+def kid_login(
+    credentials: KidLogin,
+    db: Session = Depends(get_db)
+):
+    """
+    Kid login with username and PIN
+    """
+    # Find kid by username
+    kid = db.query(Kid).filter(Kid.username == credentials.username).first()
+
+    if not kid or not kid.pin_hash:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or PIN"
+        )
+
+    # Verify PIN
+    if not pwd_context.verify(credentials.pin, kid.pin_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or PIN"
+        )
+
+    # Return kid data (no JWT token needed for kids - simpler auth)
+    return {
+        "kid": KidResponse.model_validate(kid),
+        "message": "Login successful"
+    }

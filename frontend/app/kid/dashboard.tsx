@@ -19,10 +19,11 @@ import Button from '../../components/Button';
 import { KidTheme, Typography } from '../../constants/theme';
 import { useAppStore } from '../../state/store';
 import { choresAPI, aiAPI } from '../../services/api';
+import { deleteItemAsync } from '../../utils/secureStorage';
 
 export default function KidDashboard() {
   const router = useRouter();
-  const { selectedKid, setMode } = useAppStore();
+  const { selectedKid, setSelectedKid } = useAppStore();
   const queryClient = useQueryClient();
   const [motivationMsg, setMotivationMsg] = useState('');
 
@@ -42,6 +43,21 @@ export default function KidDashboard() {
       fetchMotivation();
     },
   });
+
+  const handleLogout = async () => {
+    Alert.alert('Logout', 'See you later! 👋', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => {
+          await deleteItemAsync('kidId');
+          setSelectedKid(null);
+          router.replace('/mode-select');
+        },
+      },
+    ]);
+  };
 
   const fetchMotivation = async () => {
     if (selectedKid) {
@@ -86,8 +102,8 @@ export default function KidDashboard() {
           <Text style={styles.greeting}>Hi, {selectedKid?.name}! 👋</Text>
           <Text style={styles.subtitle}>You're doing great!</Text>
         </View>
-        <TouchableOpacity onPress={() => setMode('parent')}>
-          <Text style={styles.switchMode}>👤 Parent Mode</Text>
+        <TouchableOpacity onPress={handleLogout}>
+          <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
 
@@ -216,9 +232,9 @@ const styles = StyleSheet.create({
     color: KidTheme.colors.textLight,
     marginTop: 4,
   },
-  switchMode: {
+  logoutText: {
     fontSize: Typography.fontSizes.sm,
-    color: KidTheme.colors.primary,
+    color: KidTheme.colors.error,
     fontWeight: Typography.fontWeights.semibold,
   },
   scrollContent: {

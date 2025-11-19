@@ -8,6 +8,8 @@ class KidCreate(BaseModel):
     age: Optional[int] = None
     birthday: Optional[date] = None
     avatar_id: str = "default_1"
+    username: Optional[str] = None
+    pin: Optional[str] = None  # Plain PIN, will be hashed
 
 
 class KidUpdate(BaseModel):
@@ -26,6 +28,7 @@ class KidResponse(BaseModel):
     age: Optional[int]
     birthday: Optional[date]
     avatar_id: str
+    username: Optional[str]
     points: int
     streak: int
     last_activity: Optional[datetime]
@@ -33,3 +36,8 @@ class KidResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class KidLogin(BaseModel):
+    username: str
+    pin: str
